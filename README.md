@@ -1,16 +1,5 @@
 ## 剖析Vue实现原理 - 如何实现双向绑定mvvm
 
-![Image text](https://raw.githubusercontent.com/hechenglong1108/mvvm/master/img/2.png)
-
-
-
-
-### 几种实现双向绑定的做法
-目前几种主流的mvc(vm)框架都实现了单向数据绑定，而我所理解的双向数据绑定无非就是在单向绑定的基础上给可输入元素（input、textare等）添加了change(input)事件，来动态修改model和 view，并没有多高深。所以无需太过介怀是实现的单向或双向绑定。
-
-
-
-
 **数据劫持:** vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过`Object.defineProperty()`来劫持各个属性的`setter`，`getter`，在数据变动时发布消息给订阅者，触发相应的监听回调。
 
 
@@ -23,7 +12,7 @@ vue是通过数据劫持的方式来做数据绑定的，其中最核心的方�
 4、mvvm入口函数，整合以上三者
 
 上述流程如图所示：
-![img2][img2]
+![Image text](https://raw.githubusercontent.com/hechenglong1108/mvvm/master/img/2.png)
 
 ### 1、实现Observer
 利用`Obeject.defineProperty()`来监听属性变动
@@ -119,7 +108,9 @@ Watcher.prototype = {
 
 ### 2、实现Compile
 compile主要做的事情是解析模板指令，将模板中的变量替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，更新视图，如图所示：
-![img3][img3]
+
+![Image text](https://raw.githubusercontent.com/hechenglong1108/mvvm/master/img/3.png)
+
 
 因为遍历解析的过程有多次操作dom节点，为提高性能和效率，会先将vue实例根节点的`el`转换成文档碎片`fragment`进行解析编译操作，解析完成，再将`fragment`添加回原来的真实dom节点中
 ```javascript
