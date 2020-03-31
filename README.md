@@ -13,7 +13,7 @@ vue是通过数据劫持的方式来做数据绑定的，其中最核心的方�
 
 上述流程如图所示：
 
-![Image text](//img-shop.qmimg.cn/s1000889/2020/03/31/db78d1193192386271.png)
+![Image text](https://raw.githubusercontent.com/hechenglong1108/mvvm/master/img/2.png)
 
 ### 1、实现Observer
 利用`Obeject.defineProperty()`来监听属性变动
@@ -110,7 +110,7 @@ Watcher.prototype = {
 ### 2、实现Compile
 compile主要做的事情是解析模板指令，将模板中的变量替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，更新视图，如图所示：
 
-![Image text](//img-shop.qmimg.cn/s1000889/2020/03/31/a36a6d49fc74950d4c.png)
+![Image text](https://raw.githubusercontent.com/hechenglong1108/mvvm/master/img/3.png)
 
 
 因为遍历解析的过程有多次操作dom节点，为提高性能和效率，会先将vue实例根节点的`el`转换成文档碎片`fragment`进行解析编译操作，解析完成，再将`fragment`添加回原来的真实dom节点中
