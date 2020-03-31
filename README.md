@@ -132,7 +132,9 @@ function Compile(el) {
     }
 }
 Compile.prototype = {
-	init: function() { this.compileElement(this.$fragment); },
+	init: function() { 
+        this.compileElement(this.$fragment); 
+    },
     node2Fragment: function(el) {
         var fragment = document.createDocumentFragment(), child;
         // 将原生节点拷贝到fragment
