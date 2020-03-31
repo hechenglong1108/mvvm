@@ -94,11 +94,28 @@ Dep.prototype = {
 Object.defineProperty(data, key, {
 	get: function() {
 		// 由于需要在闭包内添加watcher，所以通过Dep定义一个全局target属性，暂存watcher, 添加完移除
-		Dep.target && dep.addDep(Dep.target);
+		Dep.target && dep.depend(Dep.target);
 		return val;
 	}
     // ... 省略
 });
+function Dep() {
+    this.subs = [];
+}
+Dep.prototype = {
+    addSub: function(sub) {
+        this.subs.push(sub);
+    },
+    // 建立watcher和dep的关系
+    depend: function() {
+        Dep.target.addDep(this);
+    },
+    notify: function() {
+        this.subs.forEach(function(sub) {
+            sub.update();
+        });
+    }
+};
 
 // Watcher.js
 Watcher.prototype = {
@@ -108,6 +125,8 @@ Watcher.prototype = {
 		Dep.target = null;
 	}
 }
+
+
 ```
 这里已经实现了一个Observer了，已经具备了监听数据和数据变化通知订阅者的功能
 
