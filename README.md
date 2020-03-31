@@ -77,12 +77,12 @@ function Dep() {
     this.subs = [];
 }
 Dep.prototype = {
-    addSub: function(sub) {
-        this.subs.push(sub);
+    addSub: function(_watcher) {
+        this.subs.push(_watcher);
     },
     notify: function() {
-        this.subs.forEach(function(sub) {
-            sub.update();
+        this.subs.forEach(function(_watcher) {
+            _watcher.update();
         });
     }
 };
@@ -94,28 +94,11 @@ Dep.prototype = {
 Object.defineProperty(data, key, {
 	get: function() {
 		// 由于需要在闭包内添加watcher，所以通过Dep定义一个全局target属性，暂存watcher, 添加完移除
-		Dep.target && dep.depend(Dep.target);
+		Dep.target && dep.addSub(Dep.target);
 		return val;
 	}
     // ... 省略
 });
-function Dep() {
-    this.subs = [];
-}
-Dep.prototype = {
-    addSub: function(sub) {
-        this.subs.push(sub);
-    },
-    // 建立watcher和dep的关系
-    depend: function() {
-        Dep.target.addDep(this);
-    },
-    notify: function() {
-        this.subs.forEach(function(sub) {
-            sub.update();
-        });
-    }
-};
 
 // Watcher.js
 Watcher.prototype = {
@@ -123,7 +106,7 @@ Watcher.prototype = {
 		Dep.target = this;
 		this.value = data[key];	// 这里会触发属性的getter，从而添加订阅者
 		Dep.target = null;
-	}
+    }
 }
 
 
@@ -242,7 +225,7 @@ var updater = {
 Watcher订阅者作为Observer和Compile之间通信的桥梁，主要做的事情是:
 1、在自身实例化时往属性订阅器(dep)里面添加自己
 2、自身必须有一个update()方法
-3、待属性变动dep.notice()通知时，能调用自身的update()方法，并触发Compile中绑定的回调，则功成身退。
+3、待属性变动dep.notice()通知时，能调用自身的update()方法，并触发Compile中绑定的回调。
 ```javascript
 function Watcher(vm, exp, cb) {
     this.cb = cb;
