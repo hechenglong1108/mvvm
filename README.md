@@ -6,9 +6,16 @@
 ### 思路整理
 vue是通过数据劫持的方式来做数据绑定的，其中最核心的方法便是通过`Object.defineProperty()`来实现对属性的劫持，达到监听数据变动的目的
 整理了一下，要实现mvvm的双向绑定，就必须要实现以下几点：
+
 1、实现一个数据监听器Observer，能够对数据对象的所有属性进行监听，如有变动可拿到最新值并通知订阅者
+
+
 2、实现一个指令解析器Compile，对每个元素节点的指令进行扫描和解析，根据指令模板替换数据，以及绑定相应的更新函数
+
+
 3、实现一个Watcher，作为连接Observer和Compile的桥梁，能够订阅并收到每个属性变动的通知，执行指令绑定的相应回调函数，从而更新视图
+
+
 4、mvvm入口函数，整合以上三者
 
 上述流程如图所示：
@@ -52,13 +59,11 @@ function defineReactive(data, key, val) {
 ```
 这样我们已经可以监听每个数据的变化了，那么监听到变化之后就是怎么通知订阅者了，所以接下来我们需要实现一个消息订阅器，很简单，维护一个数组，用来收集订阅者，数据变动触发notify，再调用订阅者的update方法，代码改善之后是这样：
 ```javascript
-// ... 省略
+
 function defineReactive(data, key, val) {
 	var dep = new Dep();
     observe(val); // 监听子属性
-
     Object.defineProperty(data, key, {
-        // ... 省略
         set: function(newVal) {
         	if (val === newVal) return;
             console.log('哈哈哈，监听到值变化了 ', val, ' --> ', newVal);
@@ -86,7 +91,6 @@ Dep.prototype = {
 我们已经明确订阅者应该是Watcher, 而且`var dep = new Dep();`是在 `defineReactive`方法内部定义的，所以想通过`dep`添加订阅者，就必须要在闭包内操作，所以我们可以在	`getter`里面动手脚：
 ```javascript
 // Observer.js
-// ...省略
 Object.defineProperty(data, key, {
 	get: function() {
 		// 由于需要在闭包内添加watcher，所以通过Dep定义一个全局target属性，暂存watcher, 添加完移除
@@ -105,7 +109,9 @@ Watcher.prototype = {
 	}
 }
 ```
-这里已经实现了一个Observer了，已经具备了监听数据和数据变化通知订阅者的功能，[完整代码](https://github.com/DMQ/mvvm/blob/master/js/observer.js)。那么接下来就是实现Compile了
+这里已经实现了一个Observer了，已经具备了监听数据和数据变化通知订阅者的功能
+
+那么接下来就是实现Compile了
 
 ### 2、实现Compile
 compile主要做的事情是解析模板指令，将模板中的变量替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，更新视图，如图所示：
@@ -148,6 +154,7 @@ Compile.prototype = {
             var reg = /\{\{(.*)\}\}/;	// 表达式文本
             // 按元素节点方式编译
             if (me.isElementNode(node)) {
+                // 解析指令
                 me.compile(node);
             } else if (me.isTextNode(node) && reg.test(text)) {
                 me.compileText(node, RegExp.$1);
