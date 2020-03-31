@@ -1,6 +1,8 @@
 ## 剖析Vue实现原理 - 如何实现双向绑定mvvm
 
-![img1][img1]
+![Image text](https://raw.githubusercontent.com/hongmaju/light7Local/master/img/productShow/20170518152848.png)
+
+
 
 
 ### 几种实现双向绑定的做法
