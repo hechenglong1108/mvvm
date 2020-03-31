@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MVVM</title>
+</head>
+<body>
+
+<div id="mvvm-app">
+    <input type="text" v-model="msg">
+    <p>{{msg}}</p>
+    <button v-on:click="update">改变</button>
+</div>
+
+<script src="./js/observer.js"></script>
+<script src="./js/watcher.js"></script>
+<script src="./js/compile.js"></script>
+<script src="./js/mvvm.js"></script>
+<script>
+    var vm = new MVVM({
+        el: '#mvvm-app',
+        data: {
+            msg:"",
+            aa: 100
+        },
+        methods: {
+            update() {
+                this.msg = 1000
+            }
+        }
+    });
+    console.log(vm)
+</script>
+
+</body>
+</html>
